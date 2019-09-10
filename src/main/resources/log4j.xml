@@ -9,6 +9,10 @@
             <param name="ConversionPattern"
                    value="%d{yyyy-MM-dd HH:mm:ss} %-5p %c{1}:%L - %m%n" />
         </layout>
+         <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="LevelMin" value="INFO" />
+            <param name="LevelMax" value="ERROR" />
+        </filter>
     </appender>
 
     <appender name="fileAppender"
@@ -21,12 +25,37 @@
             <param name="ConversionPattern"
                    value="[%d{ISO8601}] %-5p %m%n" />
         </layout>
+         <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="LevelMin" value="DEBUG" />
+            <param name="LevelMax" value="ERROR" />
+        </filter>
+
+    </appender>
+    
+     <appender name="fileResultAppender"
+              class="org.apache.log4j.RollingFileAppender">
+        <param name="File" value="gitAnalyzer-results.log" />
+        <param name="Append" value="false" />
+        <param name="MaxFileSize" value="500KB" />
+        <param name="MaxBackupIndex" value="5" />
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern"
+                   value="%m%n" />
+        </layout>
+        
+         <filter class="org.apache.log4j.varia.LevelRangeFilter">
+            <param name="LevelMin" value="TRACE" />
+            <param name="LevelMax" value="TRACE" />
+        </filter>
+
     </appender>
 
 
     <root>
-        <level value="INFO" />
+        <level value="TRACE" />
         <appender-ref ref="console" />
+        <appender-ref ref="fileAppender" />
+        <appender-ref ref="fileResultAppender" />
     </root>
 
 </log4j:configuration>

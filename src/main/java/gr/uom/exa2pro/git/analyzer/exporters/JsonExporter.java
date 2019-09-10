@@ -9,12 +9,15 @@ import com.google.gson.JsonSerializer;
 import gr.uom.exa2pro.git.analyzer.RepoFile;
 import java.lang.reflect.Type;
 import java.util.Collection;
+import org.slf4j.LoggerFactory;
 
 /**
  *
  * @author Thodoris
  */
 public class JsonExporter {
+        private final static org.slf4j.Logger logger = LoggerFactory.getLogger(JsonExporter.class.getName());
+
 
     public static void exportToJson(Collection<RepoFile> repoFiles) {
 
@@ -27,6 +30,7 @@ public class JsonExporter {
 
         System.out.println("<Result_Json_Start>");
         System.out.println(customJSON);
+        logger.trace(customJSON);
         System.out.println("<Result_Json_End>");
     }
 
