@@ -12,25 +12,33 @@ public class ArgumentInfo {
 
     private static final String GIT_REPO_LITERAL = "repo";
     private static final String FILE_TYPE_LITERAL = "filetype";
+    private static final String EXPORT_FORMAT_LITERAL = "exportformat";
 
     private static Options options = new Options();
     String localRepoPath;
     String fileTypeExtension;
+    String exportFormat;
 
     static {
-        Option dbHostOption = Option.builder(GIT_REPO_LITERAL)
+        Option gitRepoOption = Option.builder(GIT_REPO_LITERAL)
                 .required(true)
                 .desc("The local repo path. The folder in which '.git' folder resides")
                 .longOpt(GIT_REPO_LITERAL).hasArg()
                 .build();
-        Option dbUserOption = Option.builder(FILE_TYPE_LITERAL)
+        Option fileTypeOption = Option.builder(FILE_TYPE_LITERAL)
                 .required(true)
                 .desc("The Filetype extension to include in analysis. For example: '.java', '.f', '.f90', '.F', '.c'")
                 .longOpt(FILE_TYPE_LITERAL).hasArg()
                 .build();
+        Option exportOption = Option.builder(EXPORT_FORMAT_LITERAL)
+                .required(false)
+                .desc("The Export format. Supported formats: json, csv")
+                .longOpt(EXPORT_FORMAT_LITERAL).hasArg()
+                .build();
 
-        options.addOption(dbHostOption);
-        options.addOption(dbUserOption);
+        options.addOption(gitRepoOption);
+        options.addOption(fileTypeOption);
+        options.addOption(exportOption);
     }
 
     public static ArgumentInfo loadConfiguration(String... args) {
@@ -52,19 +60,16 @@ public class ArgumentInfo {
 
         try {
             commandLine = parser.parse(options, commandLineArguments);
-            return createConfigInfo(commandLine.getOptionValue(GIT_REPO_LITERAL),
-                    commandLine.getOptionValue(FILE_TYPE_LITERAL));
+             ArgumentInfo connInfo = new ArgumentInfo();
+             connInfo.localRepoPath = commandLine.getOptionValue(GIT_REPO_LITERAL);
+             connInfo.fileTypeExtension = commandLine.getOptionValue(FILE_TYPE_LITERAL);
+             connInfo.exportFormat = commandLine.getOptionValue(EXPORT_FORMAT_LITERAL, "csv");
+             return connInfo;
+                   
         } catch (ParseException exception) {
             logger.error("Command line argument error: ", exception);
         }
         return new ArgumentInfo();
-    }
-
-    private static ArgumentInfo createConfigInfo(String gitRepo, String fileType) {
-        ArgumentInfo connInfo = new ArgumentInfo();
-        connInfo.fileTypeExtension = fileType;
-        connInfo.localRepoPath = gitRepo;
-        return connInfo;
     }
 
     private static void printLoadedConfig(ArgumentInfo connInfo) {

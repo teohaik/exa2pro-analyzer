@@ -1,9 +1,12 @@
 package gr.uom.exa2pro.git.analyzer;
 
-import java.io.File;
+import gr.uom.exa2pro.git.analyzer.exporters.CsvExporter;
+import gr.uom.exa2pro.git.analyzer.exporters.JsonExporter;
 import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Collection;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.TreeSet;
@@ -38,10 +41,21 @@ public class GitAnalyzer {
         ArgumentInfo.checkForHelpAndPrintIfNeeded(args);
         ArgumentInfo configuration = ArgumentInfo.loadConfiguration(args);
  
-        analyzeRepo(Paths.get(configuration.localRepoPath), configuration.fileTypeExtension);
+        Collection<RepoFile> repoFiles = analyzeRepo(Paths.get(configuration.localRepoPath), configuration.fileTypeExtension);
+        
+        switch(configuration.exportFormat){
+            case "csv":{
+                CsvExporter.exportToCsv(repoFiles);
+                break;
+            }
+            case "json":{
+                JsonExporter.exportToJson(repoFiles);
+                break;
+            }
+        }
     }
 
-    private static void analyzeRepo(Path path, String fileTypeExtension) throws GitAPIException, RevisionSyntaxException {
+    private static Collection<RepoFile> analyzeRepo(Path path, String fileTypeExtension) throws GitAPIException, RevisionSyntaxException {
         FileRepositoryBuilder builder = new FileRepositoryBuilder();
         try {
             Repository repository = builder
@@ -88,14 +102,13 @@ public class GitAnalyzer {
             }
 
             logger.debug("closing tree walker.... ");
-
-            for (RepoFile f : fileSet) {
-                System.out.println(f);
-            }
+            
+            return fileSet;
 
         } catch (IOException e) {
-            e.printStackTrace();
+            logger.error("Error while analyzing repo", e);
         }
+        return new ArrayList<>();
     }
 
     private static void walkCommits(Repository repository, RevWalk walk)
