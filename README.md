@@ -7,7 +7,7 @@ This programs analyzes a git repository and returns the files and the number of 
 
 Git Analyzer CLI tool
 
-``
+```
 usage: java -jar gitAnalyzer-<version>.jar
  
  -filetype,--filetype <arg>           The Filetype extension to include in analysis. For example: '.java', '.f', '.f90', '.F', '.c'
@@ -15,5 +15,6 @@ usage: java -jar gitAnalyzer-<version>.jar
  -repo,--repo <arg>                   The local repo path. The folder in which '.git' folder resides
  
  -exportformat,--exportformat <arg>   The Export format. Supportedformats: json, csv
- `` 
+ 
+ ```
  
